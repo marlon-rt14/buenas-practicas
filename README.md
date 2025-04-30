@@ -1,54 +1,99 @@
-# React + TypeScript + Vite
+# Optimizing React App with Hooks
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This document explains how to use React hooks to optimize your application effectively. Below are the hooks and techniques utilized:
 
-Currently, two official plugins are available:
+## 1. `useState`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Manages local state in functional components.
+- Example:
 
-## Expanding the ESLint configuration
+  ```jsx
+  const [count, setCount] = useState(0);
+  ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 2. `useCallback`
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- Memoizes callback functions to prevent unnecessary re-creations.
+- Useful when passing callbacks to child components.
+- Example:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+  ```jsx
+  const handleClick = useCallback(() => {
+    console.log('Button clicked');
+  }, []);
+  ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 3. `useMemo`
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- Memoizes expensive calculations to avoid re-computation.
+- Example:
+
+  ```jsx
+  const computedValue = useMemo(() => {
+    return heavyComputation(input);
+  }, [input]);
+  ```
+
+## 4. `useDeferredValue`
+
+- Defers updates to a value for better UI responsiveness.
+- Example:
+
+  ```jsx
+  const deferredValue = useDeferredValue(value);
+  ```
+
+## 5. `memo`
+
+- Prevents unnecessary re-renders of functional components.
+- Example:
+
+  ```jsx
+  const MemoizedComponent = React.memo(MyComponent);
+  ```
+
+## 6. `lazy` and `Suspense`
+
+- Enables code-splitting by lazy-loading components.
+- Example:
+
+  ```jsx
+  const LazyComponent = React.lazy(() => import('./LazyComponent'));
+  ```
+
+  ```jsx
+  <Suspense fallback={<div>Loading...</div>}>
+    <LazyComponent />
+  </Suspense>
+  ```
+
+## 7. `ErrorBoundary`
+
+- Catches JavaScript errors in components and displays fallback UI.
+- Example:
+
+  ```jsx
+  class ErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(error) {
+      return { hasError: true };
+    }
+
+    componentDidCatch(error, errorInfo) {
+      console.error(error, errorInfo);
+    }
+
+    render() {
+      if (this.state.hasError) {
+        return <h1>Something went wrong.</h1>;
+      }
+      return this.props.children;
+    }
+  }
+  ```
+
+By combining these hooks and techniques, you can enhance the performance and maintainability of your React application.
