@@ -1,0 +1,1 @@
+export const SIZE_LIST = 1000 * 4;
